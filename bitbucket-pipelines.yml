@@ -23,8 +23,6 @@ pipelines:
               # Use a in-memory sqlite3 database
               - export TRAMPOLINE_CI=true
               - pip install -r requirements.txt
-              - python manage.py migrate
-              - python manage.py test
         - step:
             name: Lint the python code
             script:
@@ -44,8 +42,6 @@ pipelines:
               # Use a in-memory sqlite3 database
               - export TRAMPOLINE_CI=true
               - pip install -r requirements.txt
-              - python manage.py migrate
-              - python manage.py test
         - step:
             name: Security Scan
             script:
