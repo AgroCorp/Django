@@ -1,0 +1,25 @@
+{% extends "loginApp/header.html" %}
+
+{% block title %}Kategóriák{% endblock %}
+
+{% block content %}
+    <a class="btn btn-primary" href="{% url 'loginApp:add_category' %}">új</a>
+    <table class="table table-bordered table-striped">
+        <tr>
+            <th>Id</th>
+            <th>Nev</th>
+        </tr>
+        {% if QuerySet %}
+            {% for category in QuerySet %}
+                <tr>
+                    <td>{{ category.id }}</td>
+                    <td>{{ category.name }}</td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="4">Nincs talalat</td>
+            </tr>
+        {% endif %}
+    </table>
+{% endblock %}

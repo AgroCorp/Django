@@ -1,0 +1,87 @@
+{% extends 'loginApp/header.html' %}
+
+{% block title %}{{ room_id }} számú szoba{% endblock %}
+
+{% block content %}
+
+    <div class="flex-container mt-4">
+        <h2>#{{ room_id }} szoba</h2>
+    </div>
+
+    <div class="flex-container mt-4" style="width: 100%;height: 95%" id="chatLog">
+    </div>
+
+    <div class="row ml-1" style="height: 5%">
+        <input  type="text" style="width: 93%" class="mr-2" id="textMessage">
+        <input type="button" class="btn btn-primary" value="Send" id="sendBtn">
+    </div>
+
+    {{ room_id|json_script:"room-id" }}
+    <script>
+        const roomName = JSON.parse(document.getElementById('room-id').textContent);
+
+        const chatSocket = new WebSocket(
+            'ws://'
+            + window.location.host
+            + '/ws/chat/'
+            + roomName
+            + '/'
+        );
+
+        chatSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+
+            let div = document.createElement('div');
+            let p = document.createElement('div');
+
+
+            console.log(data.sender);
+
+            if (data.sender == "{{ user.username }}") {
+                p.innerText = data.message;
+                div.className = "d-flex justify-content-end mb-2";
+                p.className = "px-2 mx-2 rounded bg-primary text-light"
+            } else {
+                div.className = "d-flex justify-content-start mb-4";
+                p.innerText = data.sender + ": " + data.message;
+                p.className = "px-2 mx-2 rounded bg-danger text-light"
+            }
+
+            div.appendChild(p);
+
+            document.querySelector('#chatLog').appendChild(div);
+        };
+
+        chatSocket.onclose = function(e) {
+            console.error('Chat socket closed unexpectedly');
+            window.location.href = "{% url 'chatApp:exit_room' %}";
+        };
+
+        document.querySelector('#textMessage').focus();
+        document.querySelector('#textMessage').onkeyup = function(e) {
+            if (e.keyCode === 13) {  // enter, return
+                document.querySelector('#sendBtn').click();
+            }
+        };
+
+        document.querySelector('#sendBtn').onclick = function(e) {
+            const messageInputDom = document.querySelector('#textMessage');
+            const message = messageInputDom.value;
+
+            var kimenoDiv = document.createElement('div');
+            var p = document.createElement('p');
+            p.innerText = message;
+            kimenoDiv.className = "d-flex justify-content-end mb-4";
+            kimenoDiv.appendChild(p);
+
+            chatSocket.send(JSON.stringify({
+                'sender': "{{ user.username }}",
+                'message': message
+            }));
+            messageInputDom.value = '';
+
+
+        };
+    </script>
+
+{% endblock %}

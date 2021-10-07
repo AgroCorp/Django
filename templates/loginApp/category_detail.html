@@ -1,0 +1,22 @@
+{% extends "loginApp/popUpTemplate.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}Kategória részletek{% endblock%}
+
+{% block content %}
+    {% if obj_id %}
+    <a class="btn btn-danger" href="{% url 'loginApp:category_del' category_id=obj_id %}">Törlés</a>
+    {% endif %}
+    <form method="post">
+        {% csrf_token %}
+        <table>
+            {{ form|crispy }}
+        </table>
+        <a id="backButton" class="btn btn-danger">Vissza</a>
+        {% if user.is_authenticated and form.formstate == 'update'%}
+            <button class="btn btn-success" type="submit">Mentes</button>
+        {% endif %}
+
+    </form>
+{% endblock %}

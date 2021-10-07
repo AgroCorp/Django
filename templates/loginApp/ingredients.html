@@ -1,0 +1,33 @@
+{% extends "loginApp/header.html" %}
+
+{% block title %}Hozzávalók{% endblock %}
+
+{% block content %}
+    <a class="btn btn-primary" href="{% url 'loginApp:add_ingredient' %}">új</a>
+    <table class="table table-bordered table-striped">
+        <tr>
+            <th>id</th>
+            <th>Nev</th>
+            <th>Mennyiseg</th>
+            <th>Mertekegyseg</th>
+            <th>Recept id</th>
+            <th>Storage id</th>
+        </tr>
+        {% if page_obj %}
+            {% for ing in page_obj %}
+                <tr>
+                    <td>{{ ing.id }}</td>
+                    <td>{{ ing.name }}</td>
+                    <td>{{ ing.measure }}</td>
+                    <td>{{ ing.unit }}</td>
+                    <td>{{ ing.recipe.pk }}</td>
+                    <td>{{ ing.storage.pk }}</td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="6">Nincs talalat</td>
+            </tr>
+        {% endif %}
+    </table>
+{% endblock %}

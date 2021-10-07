@@ -1,0 +1,40 @@
+{% extends 'loginApp/header.html' %}
+{% load custom_filters %}
+
+{% block title %}Raktár{% endblock %}
+
+{% block content %}
+
+<a class="btn btn-danger" style="display: inline" href="{% url 'loginApp:recipes' %}">Vissza</a>
+<a class="btn btn-primary" href="{% url 'loginApp:add_ingredient' %}?selected_name_id=1&storage_id={{ user.storage }}" id="add_ingredient" onclick="return showAddPopup(this)">új hozzávaló</a>
+
+
+
+<table class="table table-bordered table-striped mt-2">
+<tr>
+    <th>Név</th>
+    <th>Mennyiség</th>
+    <th>Egység</th>
+    <th>Műveletek</th>
+</tr>
+{% if ings %}
+    {% for ing, group in ings %}
+        <tr>
+            <td>{{ ing.name }}</td>
+            <td>{{ ing.measure | upscale_measure:group }}</td>
+            <td>{{ ing.unit }}</td>
+            <td>
+                <a id="view_ingredient" name="{{ ing.pk }}" style="cursor: pointer; cursor: hand;"><i class="fas fa-eye"></i></a>
+                <a id="edit_ingredient" name="{{ ing.pk }}" style="cursor: pointer; cursor: hand"><i class="fas fa-pencil-alt"></i></a>
+                <a href="{% url 'loginApp:ingredient_del' ing.pk %}?parent={{ request.path }}"><i class="fas fa-times"></i></a>
+            </td>
+        </tr>
+    {% endfor %}
+
+{% else %}
+    <td colspan="4">Nincs talalat</td>
+{% endif %}
+</table>
+
+
+{% endblock %}

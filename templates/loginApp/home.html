@@ -1,0 +1,14 @@
+{% extends "loginApp/header.html" %}
+
+{% block title %}Fokepernyo{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+    <h1>Hello {{ user.username }}</h1>
+{% elif request.session.user_logged_in %}
+    <script type="application/javascript">
+        setTimeout(function () {location.reload()}, 5000);
+    </script>
+{% endif %}
+
+{% endblock %}

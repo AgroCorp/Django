@@ -1,0 +1,31 @@
+{% extends "loginApp/header.html" %}
+
+{% block title %}Allergenek{% endblock %}
+
+{% block content %}
+    <a class="btn btn-primary" href="{% url 'loginApp:add_allergie' %}">új</a>
+    <table class="table table-bordered table-striped">
+        <tr>
+            <th>id</th>
+            <th>tej</th>
+            <th>gluten</th>
+            <th>hus</th>
+            <th>tojas</th>
+        </tr>
+        {% if page_obj %}
+            {% for allergie in page_obj %}
+                <tr>
+                    <td>{{ allergie.id }}</td>
+                    <td>{{ allergie.tej|yesno:"+,,talan" }}</td>
+                    <td>{{ allergie.gluten|yesno:"+,,talan" }}</td>
+                    <td>{{ allergie.hus|yesno:"+,,talan" }}</td>
+                    <td>{{ allergie.tojas|yesno:"+,,talan" }}</td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="5">Nincs talalat</td>
+            </tr>
+        {% endif %}
+    </table>
+{% endblock %}

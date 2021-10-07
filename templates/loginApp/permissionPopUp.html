@@ -1,0 +1,12 @@
+{% extends 'loginApp/popUpTemplate.html' %}
+
+{% block title %}Engedely megtagadva{% endblock %}
+
+{% block content %}
+    <div class="alert alert-danger" role="alert">Onnek nincs joga az oldal megtekintesehez</div>
+    {% if perm %}
+        <div class="alert alert-warning" role="alert">A szukseges jog az oldal megtekintesehez: {{ perm.name }}<br>
+        Keresse fel a rendszergazdat a kovetkezo jog megadasaert: {{ perm.codename }}</div>
+    {% endif %}
+    <div id="backButton" class="btn btn-danger" width>Bezar</div>
+{% endblock %}

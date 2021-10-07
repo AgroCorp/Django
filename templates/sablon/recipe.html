@@ -1,0 +1,47 @@
+{% load static %}
+{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ recipe.name }}</title>
+    <style type="text/css">
+        .recipeImage {
+            width: 400px;
+            height: auto;
+        }
+        div{
+            width: 50%;
+            height: auto;
+            margin-left: auto;
+            border: medium #0f0f0f;
+        }
+    </style>
+</head>
+<img>
+<h1>{{ recipe.name }}</h1>
+<div>
+    <hr>
+    <h2>Recept elkeszitese:</h2>
+    <pre style="font-family: sans-serif">
+        {{ recipe.description }}
+    </pre>
+</div>
+
+<div>
+<hr>
+    <h2>hozzavalok listaja:</h2>
+    <ul>
+    {% for ing in ings %}
+        <li>{{ ing.name }}: {{ ing.measure | upscale_measure_2:ing.unit }} {{ ing.unit }}</li>
+    {% endfor %}
+    </ul>
+</div>
+
+<hr>
+<h2>Kép:</h2>
+{% if recipe_obj.image.name != 'False' %}
+    <img src="{{ recipe.image.path }}" class="recipeImage" />
+{% endif %}
+</body>
+</html>
