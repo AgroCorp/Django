@@ -75,10 +75,14 @@
   </div>
 </nav>
 
-    {% if error %}
-    <div class="container mt-4">
-        {{ error }}
-    </div>
+    {% if messages %}
+        <div class="container mt-4">
+    <ul>
+        {% for message in messages %}
+            <li><div class="pt-2">{{ message }}</div></li>
+        {% endfor %}
+    </ul>
+        </div>
     {% endif %}
 
     <div class="container mt-4">
@@ -88,25 +92,37 @@
     </div>
 
  {% if QuerySet %}
- <div class="pagination container mt-4">
+ <div class="pagination mt-4 d-flex justify-content-center">
     <span class="step-links">
-        {% if page_obj.has_previous %}
-            <a href="?page=1" class="btn btn-primary">&laquo; first</a>
-            <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-primary">previous</a>
+        {% if QuerySet.has_previous %}
+            <a href="?page=1}&count={{ per_page }}" class="btn btn-primary">&laquo; first</a>
+            <a href="?page={{ QuerySet.previous_page_number }}}&count={{ per_page }}" class="btn btn-primary">previous</a>
         {% endif %}
 
         <span class="current badge badge-pill badge-info">
-            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            Page {{ QuerySet.number }} of {{ QuerySet.paginator.num_pages }}.
         </span>
+        <select id="paginatorSelect" onchange="changePaginator(this, '{{ request.path }}')">
+            <option value="10">10</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+            <option value="1000">1000</option>
+        </select>
 
-        {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}" class="btn btn-primary">next</a>
-            <a href="?page={{ page_obj.paginator.num_pages }}" class="btn btn-primary">last &raquo;</a>
+        {% if QuerySet.has_next %}
+            <a href="?page={{ QuerySet.next_page_number }}&count={{ per_page }}" class="btn btn-primary">next</a>
+            <a href="?page={{ QuerySet.paginator.num_pages }}&count={{ per_page }}" class="btn btn-primary">last &raquo;</a>
         {% endif %}
     </span>
 </div>
  {% endif %}
     <script type="text/javascript" src="{% static 'loginApp/js/default.js' %}" ></script>
+    <script type="text/javascript">
+        $("#paginatorSelect").val({{per_page}});
+    </script>
     {% block script %}
 
     {% endblock %}

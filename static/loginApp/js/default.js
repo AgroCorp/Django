@@ -3,6 +3,14 @@ function showEditPopup(url) {
         'height=500,width=800,resizable=yes,scrollbars=yes');
     return false;
 }
+
+function changePaginator(element, url) {
+    var selected = element.value
+    var forwardUrl = url + "?page=1&count=" +selected;
+    console.log(forwardUrl);
+    window.location.replace(forwardUrl);
+}
+
 function showAddPopup(triggeringLink) {
     var name = triggeringLink.id.replace(/^add_/, '');
     href = triggeringLink.href;
@@ -87,3 +95,5 @@ jQuery("a").click(function (event) {
         });
     }
 })
+
+
