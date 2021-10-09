@@ -34,7 +34,7 @@ logger = logging.getLogger(__name__)
 # Create your views here.
 
 
-@login_required(login_url="/recipes/login?next=/recipes/recipes")
+@login_required(login_url="/recipes/login?next=/recipes/recipe_list")
 def homepage(request):
     return render(request, "loginApp/home.html")
 
@@ -64,30 +64,23 @@ def recipe_to_pdf(request, recipe_id):
     ings = Ingredient.objects.filter(recipe_id=recipe_id)
     pdf = utils.render_to_pdf('../templates/sablon/recipe.html', {'recipe': recipe_obj, 'ings': ings})
     return FileResponse(pdf,content_type='application/pdf')
-    # if pdf:
-    #     response = HttpResponse(pdf, content_type='application/pdf')
-    #     filename = f"{recipe_obj.name.replace(' ', '_')}.pdf"
-    #     content = f"inline; filename='{filename}'"
-    #     download = request.GET.get("download")
-    #     if download:
-    #         content = f"attachment; filename='{filename}'"
-    #     response['Content-Disposition'] = content
-    #     return response
-    # return HttpResponse("Not found")
 
-
+@login_required(login_url="/recipes/login?next=/recipes/recipe_list")
 def recipeList(request):
     lista = Recipe.objects.all().order_by('name', 'difficulty')
-    paginator = Paginator(lista, 10)
+    page_number = request.GET.get('page')
+    page_count = request.GET.get('count', 10)
+
+    paginator = Paginator(lista, page_count)
 
     # unseen emails list from imap
     emails = [msg for msg in imap.fetch(AND(seen=False))]
 
-    print(len(emails))
+    #print(len(emails))
 
-    page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, "loginApp/recipes.html", {'QuerySet': lista, 'page_obj': page_obj})
+
+    return render(request, "loginApp/recipes.html", {'QuerySet': page_obj, 'per_page': page_obj.paginator.per_page})
 
 
 def register_request(request):
@@ -117,7 +110,7 @@ def register_request(request):
     return render(request=request, template_name="loginApp/register.html", context={"register_form": form})
 
 
-@login_required(login_url="/recipes/login?next=/recipes/recipes/")
+@login_required(login_url="/recipes/login?next=/recipes/recipe_list")
 @permission_required(raise_exception=False, login_url='/recipes/permission?perm=change_allergies',
                      perm="change_allergies")
 def update_allergie(request, allergies_id):
@@ -215,7 +208,10 @@ def login_request(request):
             if user is not None:
                 login(request, user)
                 messages.info(request, f"Sikeresen bejelentkeztél {username}.")
-                return redirect(next_url)
+                if next_url:
+                    return redirect(next_url)
+                else:
+                    return redirect("loginApp:recipes")
             else:
                 messages.error(request, "Hibás felhasználónév vagy jelszó")
         else:
@@ -224,7 +220,7 @@ def login_request(request):
     return render(request=request, template_name="loginApp/login.html", context={"login_form": form})
 
 
-@login_required(login_url="/recipes/login?next=/recipes/recipes")
+@login_required(login_url="/recipes/login?next=/recipes/recipe_list")
 def add_recipe(request):
     if request.method == "POST":
         form = forms.RecipeForm(request.POST, request.FILES)
@@ -263,22 +259,30 @@ def get_ingredient_list_by_recipeId(recipe_id):
     return groups
 
 
-@login_required(login_url="/recipes/login?next=/recipes/recipes")
+@login_required(login_url="/recipes/login?next=/recipes/recipe_list")
 def update_recipe(request, recipe_id):
     real_recipe_id = settings.FERNET.decrypt(recipe_id.encode()).decode()
     obj = get_object_or_404(Recipe, id=real_recipe_id)
     groups = get_ingredient_list_by_recipeId(real_recipe_id)
     if request.method == "POST":
-        form = forms.RecipeForm(request.POST or None, request.FILES, instance=obj, formstate='update')
+        form = forms.RecipeForm(request.POST or None, request.FILES or None, instance=obj, formstate='update')
         if form.is_valid():
             form.save()
-            return redirect(reverse('loginApp:recipe_view', recipe_id=recipe_id))
+            messages.success(request, 'Sikeres mentes')
+            return redirect(reverse('loginApp:recipe_edit', kwargs={'recipe_id': recipe_id}))
         else:
             messages.error(request, "Hiba történt a mentés során")
             return render(request, "loginApp/detail.html", {"recipe": form, "ings": groups, 'recipe_obj': obj})
     else:
         form = forms.RecipeForm(instance=obj, formstate='update')
     return render(request, "loginApp/detail.html", {"recipe": form, "ings": groups, 'recipe_obj': obj})
+
+
+def delete_recipe(request, recipe_id):
+    real_recipe_id = settings.FERNET.decrypt(recipe_id.encode()).decode()
+    obj = get_object_or_404(Recipe, id=real_recipe_id)
+    obj.delete()
+    return redirect(reverse("loginApp:recipes"))
 
 
 def view_recipe(request, recipe_id):

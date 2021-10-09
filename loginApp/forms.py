@@ -106,6 +106,7 @@ class RecipeForm(ModelForm):
         super(RecipeForm, self).__init__(*args, **kwargs)
         for field in self.fields:
             self.fields[field].disabled = True if self.formstate == 'view' else False
+            self.fields[field].label = False
         self.fields['category'].empty_label = None
         self.fields['allergies'].empty_label = None
 
@@ -120,7 +121,6 @@ class RecipeForm(ModelForm):
         category = cleaned_data.get('category')
         difficulty = cleaned_data.get('difficulty')
         allergies = cleaned_data.get('allergies')
-        image = cleaned_data.get('image')
         if not name and not description and not category and not difficulty and not allergies:
             raise forms.ValidationError("Hianyzo adatok!")
         if 1 >= difficulty <= 5:

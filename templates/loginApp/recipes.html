@@ -28,6 +28,9 @@
                 <a class="btn btn-primary" href="{% url 'loginApp:recipe_edit' recipe.mask_pk %}">szerkeszt</a>
                 {% endif %}
                 <a class="btn btn-primary" href="{% url 'loginApp:recipe_view' recipe.mask_pk %}">megnéz</a>
+                {% if user.is_authenticated %}
+                <a class="btn btn-danger" href="{% url 'loginApp:recipe_delete' recipe.mask_pk %}">Torles</a>
+                {% endif %}
             </td>
         </tr>
     {% endfor %}
