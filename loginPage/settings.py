@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'loginApp.apps.LoginappConfig',
     'smartHome.apps.SmarthomeConfig',
     'chatApp.apps.ChatappConfig',
+    'codenames.apps.codenamesConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -179,7 +180,7 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [('127.17.0.1', 6379)],
+            "hosts": [('192.168.2.55', 6379)],
         },
     },
 }

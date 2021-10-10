@@ -1,0 +1,77 @@
+{% extends 'loginApp/header.html' %}
+
+{% block title %}{{ room_id }} számú szoba{% endblock %}
+
+{% block content %}
+
+    <div class="flex-container mt-4">
+        <h2>#{{ room_id }} szoba, jatekosok szama: <span id="playersCount">0</span> db</h2>
+    </div>
+
+    <div class="flex-container mt-4" style="width: 100%;height: 95%;display: block" id="game">
+    <div class="row">
+        <div id="pirosCsapat" class="col">
+            <p>Piros csapat</p>
+            <ul id='pirosCsapatUl' class="list-group lists">
+            </ul>
+        </div>
+        <div id="kekCsapat" class="col">
+          <p>Kek csapat</p>
+          <ul id='kekCsapatUl' class="list-group lists">
+            </ul>
+        </div>
+        <div id="nincsCsapat" class="col">
+          <p>Nincs csapat</p>
+            <ul id='nincsCsapatUl' class="list-group lists">
+            </ul>
+        </div>
+    </div>
+    </div>
+
+    <div class="row ml-1 justify" style="height: 5%">
+        <input  type="text" style="width: 93%" class="mr-2" id="textMessage">
+        <input type="button" class="btn btn-primary" value="Send" id="sendBtn">
+    </div>
+
+    {{ room_id|json_script:"room-id" }}
+    <script>
+        const roomName = JSON.parse(document.getElementById('room-id').textContent);
+        var players = 0;
+
+        const socket = new WebSocket(
+            'ws://'
+            + window.location.host
+            + '/ws/codenames/'
+            + roomName
+            + '/'
+        );
+
+        socket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            if (data.event == 'join')
+            {
+                players = data.playersCount;
+                $("#playersCount").text(players);
+
+                //user lista elem letrehozasa
+                $("#nincsCsapatUl").append("<li id='nameListItem' class='list-group-item list-group-item-secondary'>{{ user.username }}</li>");
+            }
+        };
+
+        socket.onclose = function(e) {
+            console.error('Chat socket closed unexpectedly');
+            window.location.href = "{% url 'codenames:exit_room' %}";
+        };
+
+
+        document.querySelector('#sendBtn').onclick = function(e) {
+
+            socket.send(JSON.stringify({
+                'sender': "{{ user.username }}",
+                'message': message
+            }));
+
+        };
+    </script>
+
+{% endblock %}
