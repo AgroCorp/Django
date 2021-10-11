@@ -8,8 +8,3 @@ admin.site.register(Allergies)
 admin.site.register(Recipe)
 admin.site.register(Ingredient)
 admin.site.register(Category)
-
-class Media:
-    js = (
-        ''
-    )

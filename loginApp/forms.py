@@ -3,7 +3,7 @@ from django.forms import ModelForm
 from django.contrib.auth.forms import UserCreationForm
 
 
-from .models import *
+from . import models
 
 
 # Create your forms here.
@@ -14,7 +14,7 @@ class NewUserForm(UserCreationForm):
     last_name = forms.CharField(required=False)
 
     class Meta:
-        model = CustomUser
+        model = models.CustomUser
         fields = ("username", "first_name", "last_name", "email", "password1", "password2")
 
     def save(self, commit=True):
@@ -22,7 +22,7 @@ class NewUserForm(UserCreationForm):
         user.email = self.cleaned_data['email']
         user.first_name = self.cleaned_data['first_name']
         user.last_name = self.cleaned_data['last_name']
-        storage = Storage.objects.create()
+        storage = models.Storage.objects.create()
         storage.save()
         user.storage_id = storage.pk
         user.moderator = False
@@ -41,7 +41,7 @@ class CategoryForm(ModelForm):
             self.fields[field].disabled = True if self.formstate == 'view' else False
 
     class Meta:
-        model = Category
+        model = models.Category
         fields = ['name']
 
     def clean(self):
@@ -68,9 +68,8 @@ class AllergiesFrom(ModelForm):
         for field in self.fields:
             self.fields[field].disabled = True if self.formstate == 'view' else False
 
-
     class Meta:
-        model = Allergies
+        model = models.Allergies
         fields = ('name', 'tej', 'gluten', 'hus', 'tojas')
 
     def clean(self):
@@ -111,7 +110,7 @@ class RecipeForm(ModelForm):
         self.fields['allergies'].empty_label = None
 
     class Meta:
-        model = Recipe
+        model = models.Recipe
         fields = ("name", "description", "category", "difficulty", "allergies", "image",)
 
     def clean(self):
@@ -141,8 +140,8 @@ class RecipeForm(ModelForm):
 
 
 class IngredientForm(ModelForm):
-    name = forms.ChoiceField(choices=[(iter.pk, iter.name) for iter in AllIngredients.objects.all()], widget=forms.Select(attrs={"onchange": "nameChanged(this,'ingredient')"}))
-    unit = forms.ChoiceField(choices=[(iter.pk, iter.measure) for iter in PreIngredients.objects.filter(group=AllIngredients.objects.get(pk=1).group)])
+    name = forms.ChoiceField(choices=[(iter.pk, iter.name) for iter in models.AllIngredients.objects.all()], widget=forms.Select(attrs={"onchange": "nameChanged(this,'ingredient')"}))
+    unit = forms.ChoiceField(choices=[(iter.pk, iter.measure) for iter in models.PreIngredients.objects.filter(group=models.AllIngredients.objects.get(pk=1).group)])
     recipe_id = forms.IntegerField(widget=forms.HiddenInput(), required=False)
     storage_id = forms.IntegerField(widget=forms.HiddenInput(), required=False)
 
@@ -159,13 +158,13 @@ class IngredientForm(ModelForm):
         for field in self.fields:
             self.fields[field].disabled = True if self.formstate == 'view' else False
         try:
-            unit_choices = [(iter.pk, iter.measure) for iter in PreIngredients.objects.filter(group=AllIngredients.objects.get(pk=self.selected_name_id).group)]
+            unit_choices = [(iter.pk, iter.measure) for iter in models.PreIngredients.objects.filter(group=models.AllIngredients.objects.get(pk=self.selected_name_id).group)]
             self.fields['unit'].choices = unit_choices
-        except AllIngredients.DoesNotExist as e:
+        except models.AllIngredients.DoesNotExist as e:
             print("nem kerdezheto le a unit lista", e)
 
     class Meta:
-        model = Ingredient
+        model = models.Ingredient
         fields = ['name', 'measure', 'unit']
 
     def clean(self):
@@ -183,13 +182,13 @@ class IngredientForm(ModelForm):
 
     def save(self, commit=True):
         ing = super(IngredientForm, self).save(commit=False)
-        ing.name = AllIngredients.objects.get(pk=self.cleaned_data['name']).name
-        ing.unit = PreIngredients.objects.get(pk=self.cleaned_data['unit']).measure
-        ing.measure = self.cleaned_data['measure'] * PreIngredients.objects.get(pk=self.cleaned_data['unit']).multiply
+        ing.name = models.AllIngredients.objects.get(pk=self.cleaned_data['name']).name
+        ing.unit = models.PreIngredients.objects.get(pk=self.cleaned_data['unit']).measure
+        ing.measure = self.cleaned_data['measure'] * models.PreIngredients.objects.get(pk=self.cleaned_data['unit']).multiply
         if self.cleaned_data['recipe_id']:
-            ing.recipe = Recipe.objects.get(pk=self.cleaned_data['recipe_id'])
+            ing.recipe = models.Recipe.objects.get(pk=self.cleaned_data['recipe_id'])
         if self.cleaned_data['storage_id']:
-            ing.storage = Storage.objects.get(pk=self.cleaned_data['storage_id'])
+            ing.storage = models.Storage.objects.get(pk=self.cleaned_data['storage_id'])
 
         if commit:
             ing.save()

@@ -20,7 +20,7 @@ from . import settings
 from . import homepage
 
 urlpatterns = [
-    path('admin/',admin.site.urls),
+    path('admin/', admin.site.urls),
     path('recipes/', include('loginApp.urls'), name='loginApp'),
     path('home/', include('smartHome.urls'), name='smartHome'),
     path('chat/', include('chatApp.urls'), name='chatApp'),

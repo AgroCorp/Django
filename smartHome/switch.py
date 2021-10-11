@@ -12,14 +12,13 @@ def init():
 
 
 def get_switch_status():
-    switch_port = 0
     states = {}
 
     for i in range(4):
         if GPIO.input(ports[i]):
             states[i + 1] = 'on'
         else:
-            states[i+1] = 'of'
+            states[i + 1] = 'of'
 
         # if i == 0:
         #     switch_port = 31
@@ -54,18 +53,6 @@ def switch_toggle(number, state_to):
         switch_port = ports[int(number) - 1]
     except ValueError:
         switch_port = -1
-
-
-    # if number == "1":
-    #     switch_port = 6
-    # elif number == "2":
-    #     switch_port = 16
-    # elif number == "3":
-    #     switch_port = 13
-    # elif number == "4":
-    #     switch_port = 19
-    #
-    # ports[int(number)]
 
     response = {}
 

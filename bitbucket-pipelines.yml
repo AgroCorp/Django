@@ -24,6 +24,7 @@ pipelines:
               - export TRAMPOLINE_CI=true
               - pip install flake8 pytest pytest-cov
               - pip install -r requirements.txt
+              - flake8 --statistic --exclude="venv,loginApp/migrations" --ignore=E501 -v
         - step:
             name: Security Scan
             script:
