@@ -8,17 +8,21 @@
         <h2>#{{ room_id }} szoba, jatekosok szama: <span id="playersCount">0</span> db</h2>
     </div>
 
-    <div class="flex-container mt-4" style="width: 100%;height: 95%;display: block" id="game">
+    <div class="flex-container mt-4" style="width: 100%;" id="playersList">
     <div class="row">
         <div id="pirosCsapat" class="col">
-            <p>Piros csapat</p>
+            <span>Piros csapat:</span><button class="btn" id="red_team" name="joinButton"><i class="fas fa-plus"></i></button>
             <ul id='pirosCsapatUl' class="list-group lists">
             </ul>
+            <span>spyMaster:</span><button class="btn" id="red_master" name="joinButton"><i class="fas fa-plus"></i></button>
+            <ul id="pirosSpyMaster" class="list-group"></ul>
         </div>
         <div id="kekCsapat" class="col">
-          <p>Kek csapat</p>
+          <span>Kek csapat:</span><button class="btn" id="blue_team" name="joinButton"><i class="fas fa-plus"></i></button>
           <ul id='kekCsapatUl' class="list-group lists">
             </ul>
+            <span>spyMaster:</span><button class="btn" id="blue_master" name="joinButton"><i class="fas fa-plus"></i></button>
+            <ul id="kekSpyMaster" class="list-group"></ul>
         </div>
         <div id="nincsCsapat" class="col">
           <p>Nincs csapat</p>
@@ -28,7 +32,11 @@
     </div>
     </div>
 
-    <div class="row ml-1 justify" style="height: 5%">
+    <div id="game" class="flex-container mt-3" style="min-height: 500px;">
+
+    </div>
+
+    <div class="row ml-1 justify" style="height: 5%; display: none">
         <input  type="text" style="width: 93%" class="mr-2" id="textMessage">
         <input type="button" class="btn btn-primary" value="Send" id="sendBtn">
     </div>
@@ -36,7 +44,7 @@
     {{ room_id|json_script:"room-id" }}
     <script>
         const roomName = JSON.parse(document.getElementById('room-id').textContent);
-        var players = 0;
+        var players;
 
         const socket = new WebSocket(
             'ws://'
@@ -46,15 +54,29 @@
             + '/'
         );
 
+        socket.onopen = function (e) {
+            socket.send(JSON.stringify({
+                'event': 'socket_connected',
+                'username': '{{ user.username }}'
+            }))
+        }
+
         socket.onmessage = function(e) {
             const data = JSON.parse(e.data);
+            console.log(data);
             if (data.event == 'join')
             {
-                players = data.playersCount;
-                $("#playersCount").text(players);
-
-                //user lista elem letrehozasa
-                $("#nincsCsapatUl").append("<li id='nameListItem' class='list-group-item list-group-item-secondary'>{{ user.username }}</li>");
+                count = data.players.length;
+                $("#playersCount").text(count);
+                players = data.players;
+                console.log(players)
+                renderPlayerList(players)
+            }
+            else if (data.event = 'error') {
+                if (data.to_user == '{{ user.username }}')
+                {
+                    alert(data.msg);
+                }
             }
         };
 
@@ -72,6 +94,48 @@
             }));
 
         };
+
+        $("button[name='joinButton']").click( function () {
+            let a = $(this);
+            console.log(a.attr('id'));
+
+            socket.send(JSON.stringify({
+                'event': 'change_team',
+                'user': '{{ user.username }}',
+                'team': a.attr('id')
+            }));
+        });
+
+        function renderPlayerList(players)
+        {
+            // a listak kiuritese,
+            $("#nincsCsapatUl").html('')
+            $("#kekCsapatUl").html('')
+            $("#pirosCsapatUl").html('')
+            $("#kekSpyMaster").html('')
+            $("#pirosSpyMaster").html('')
+
+
+            for(var i = 0; i<players.length; i++)
+            {
+                let player = players[i];
+                if(player.team == 'red'){
+                    if (player.master){
+                        $("#pirosSpyMaster").append("<li class='list-group-item list-group-item-danger'>"+ player.name +"</li>");
+                    } else {
+                        $("#pirosCsapatUl").append("<li class='list-group-item list-group-item-danger'>"+ player.name +"</li>");
+                    }
+                } else if (player.team == 'blue') {
+                    if (player.master){
+                    $("#kekSpyMaster").append("<li class='list-group-item list-group-item-primary'>"+ player.name +"</li>");
+                    } else {
+                    $("#kekCsapatUl").append("<li class='list-group-item list-group-item-primary'>"+ player.name +"</li>");
+                    }
+                } else {
+                    $("#nincsCsapatUl").append("<li class='list-group-item list-group-item-secondary'>"+ player.name +"</li>");
+                }
+            }
+        }
     </script>
 
 {% endblock %}
