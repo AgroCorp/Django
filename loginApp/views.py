@@ -65,8 +65,9 @@ def recipe_to_pdf(request, recipe_id):
     pdf = utils.render_to_pdf('../templates/sablon/recipe.html', {'recipe': recipe_obj, 'ings': ings})
     return FileResponse(pdf, content_type='application/pdf')
 
+
 @login_required(login_url="/recipes/login?next=/recipes/recipe_list")
-def recipeList(request):
+def recipe_list(request):
     lista = Recipe.objects.all().order_by('name', 'difficulty')
     page_number = request.GET.get('page')
     page_count = request.GET.get('count', 10)
