@@ -1,4 +1,4 @@
-#  Template to deploy a Python Django application to the Google App Engine standard environment
+#  Template to deploy a Python Django application
 
 #  This template allows you to deploy your Python Django application to the Google App Engine.
 #  The workflow allows running tests, code linting and security scans on feature branches (as well as master).
@@ -13,24 +13,6 @@ image: python:3.8
 # Workflow Configuration
 
 pipelines:
-  default:
-    - parallel:
-        - step:
-            name: Build and Test
-            caches:
-              - pip
-            script:
-              # Use a in-memory sqlite3 database
-              - export TRAMPOLINE_CI=true
-              - pip install -r requirements.txt
-        - step:
-            name: Lint the python code
-            script:
-              - pip install flake8
-              # Command-line utility for enforcing style (PEP-0008) consistency across Python projects https://flake8.pycqa.org/en/latest/manpage.html
-              - flake8 . --extend-exclude=dist,build,static,migrations
-              # excluded by Default: ['.svn', 'CVS', '.bzr', '.hg', '.git', '__pycache__', '.tox', '.eggs', '*.egg']
-
   branches:
     master:
       - parallel:
@@ -39,8 +21,8 @@ pipelines:
             caches:
               - pip
             script:
-              # Use a in-memory sqlite3 database
               - export TRAMPOLINE_CI=true
+              - pip install flake8 pytest pytest-cov
               - pip install -r requirements.txt
         - step:
             name: Security Scan
