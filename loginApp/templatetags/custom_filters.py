@@ -8,6 +8,7 @@ def convert_linebreak_to_html(value):
     new_value = new_value.replace('\n', '<br>')
     return new_value
 
+
 @register.filter(name='upscale_measure')
 def readable_measure(value, group):
     if group == 1:
@@ -30,7 +31,7 @@ def readable_measure(value, group):
 
 
 @register.filter(name='upscale_measure_2')
-def readable_measure(value, pre_name):
+def readable_measure2(value, pre_name):
     from ..models import PreIngredients
     pre = PreIngredients.objects.get(measure=pre_name).multiply
     return value / pre

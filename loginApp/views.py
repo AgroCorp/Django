@@ -1,4 +1,3 @@
-import datetime
 import json
 import logging
 
@@ -19,6 +18,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 
 from . import forms
+from . import utils
 from .serialize import ApiModelSerializer
 from .models import Recipe, Allergies, Category, Ingredient, PreIngredients, AllIngredients, APIModel, CustomUser
 from django.conf import settings
@@ -63,10 +63,11 @@ def recipe_to_pdf(request, recipe_id):
     recipe_obj = Recipe.objects.get(pk=recipe_id)
     ings = Ingredient.objects.filter(recipe_id=recipe_id)
     pdf = utils.render_to_pdf('../templates/sablon/recipe.html', {'recipe': recipe_obj, 'ings': ings})
-    return FileResponse(pdf,content_type='application/pdf')
+    return FileResponse(pdf, content_type='application/pdf')
+
 
 @login_required(login_url="/recipes/login?next=/recipes/recipe_list")
-def recipeList(request):
+def recipe_list(request):
     lista = Recipe.objects.all().order_by('name', 'difficulty')
     page_number = request.GET.get('page')
     page_count = request.GET.get('count', 10)
@@ -76,7 +77,7 @@ def recipeList(request):
     # unseen emails list from imap
     emails = [msg for msg in imap.fetch(AND(seen=False))]
 
-    #print(len(emails))
+    print(len(emails))
 
     page_obj = paginator.get_page(page_number)
 
@@ -400,9 +401,6 @@ def view_ingredient(request, ingredient_id):
     return render(request, "loginApp/ingredient_detail.html", {"form": form})
 
 
-from . import utils
-
-
 def update_ingredient(request, ingredient_id):
     obj = Ingredient.objects.get(pk=ingredient_id)
     all_ingredient = get_object_or_404(AllIngredients, name=obj.name)
@@ -426,11 +424,12 @@ def update_ingredient(request, ingredient_id):
             return render(request, "loginApp/ingredient_detail.html", {"form": form, })
     elif request.method == 'POST':
         selected_name_id = request.POST.get('name')
-        form = forms.IngredientForm(request.POST, instance=obj, selected_name_id=selected_name_id, initial={'name': all_ingredient.pk,
-                                                                         'measure': obj.measure,
-                                                                         'unit': pre_ingredient.pk,
-                                                                         'recipe_id': obj.recipe_id,
-                                                                         'storage_id': obj.storage_id})
+        form = forms.IngredientForm(request.POST, instance=obj, selected_name_id=selected_name_id,
+                                    initial={'name': all_ingredient.pk,
+                                             'measure': obj.measure,
+                                             'unit': pre_ingredient.pk,
+                                             'recipe_id': obj.recipe_id,
+                                             'storage_id': obj.storage_id})
 
         if form.is_valid():
             instance = form.save()

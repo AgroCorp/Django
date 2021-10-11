@@ -1,12 +1,10 @@
-from django.shortcuts import render, redirect
-from django.http import JsonResponse, HttpResponse
+from django.shortcuts import render
+from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.decorators import login_required
 import logging
 
 from django.conf import settings
-
-import loginApp.views
 
 if not settings.DEBUG_:
     from . import switch
@@ -56,4 +54,3 @@ def rfid_login(request):
             led.led_blink(1, led.RED)
         finally:
             GPIO.cleanup()
-
