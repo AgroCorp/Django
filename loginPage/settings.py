@@ -33,7 +33,7 @@ ALLOWED_HOSTS = ['192.168.2.55', '127.0.0.1', '192.168.2.10']
 
 # Application definition
 
-DEFAULT_AUTO_FIELD='django.db.models.AutoField'
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 INSTALLED_APPS = [
     'loginApp.apps.LoginappConfig',
@@ -82,8 +82,7 @@ ROOT_URLCONF = 'loginPage.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')]
-        ,
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

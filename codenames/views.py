@@ -37,5 +37,3 @@ def join_room(request):
 
 def exit_room(request):
     return render(request, 'codenames/home.html', {})
-
-
