@@ -24,6 +24,7 @@ urlpatterns = [
     path('recipes/', include('loginApp.urls'), name='loginApp'),
     path('home/', include('smartHome.urls'), name='smartHome'),
     path('chat/', include('chatApp.urls'), name='chatApp'),
+    path('codenames/', include('codenames.urls'), name='codenames'),
     path('', homepage.homepage, name='homepage')
 ]
 
