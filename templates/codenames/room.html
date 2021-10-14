@@ -127,6 +127,21 @@
             }));
         });
 
+        function userTippElkuldese(element) {
+            console.log(getCurrentPlayer());
+            console.log(element.id);
+            let akt = element.id;
+            if(getCurrentPlayer().team == aktTeam)
+            {
+                console.log('user_tipp elkuldve a servernek')
+                socket.send(JSON.stringify({
+                    'event': 'user_tipp',
+                    'user': getCurrentPlayer(),
+                    'pos': akt
+                }));
+            }
+        }
+
         function renderPlayerList(players)
         {
             // a listak kiuritese,
@@ -180,42 +195,45 @@
                     if (card.team == 'blue') {
                         if (getCurrentPlayer().master) {
                             if (card.guessed) {
-                                //$('#cardMatrix').append("{% word_card card.word 'kek kek-kitalalt' %}");
-                                $('#cardMatrix').append(`<div class='wordCard kek kek-kitalalt'><div class='textBox'><p class='cardText'>${card.word}</p></div></div>`);
+                                $('#cardMatrix').append(`<div id='${i}_${j}' class='wordCard kek kek-kitalalt'><div class='textBox'><p class='cardText'>${card.word}</p></div></div>`);
                             } else {
-                                $('#cardMatrix').append(`<div class='wordCard kek'><div class='textBox'><p class='cardText'>${card.word}</p></div></div>`);
+                                $('#cardMatrix').append(`<div id='${i}_${j}' onclick="userTippElkuldese(this)" name='wordCard' class='wordCard kek'><div class='textBox'><p class='cardText'>${card.word}</p></div></div>`);
                             }
                         } else {
                             if (card.guessed) {
-                                $('#cardMatrix').append(`<div class='wordCard kek kek-kitalalt'><div class='textBox'><p class='cardText'>${card.word}</p></div></div>`);
+                                $('#cardMatrix').append(`<div id='${i}_${j}' class='wordCard kek kek-kitalalt'><div class='textBox'><p class='cardText'>${card.word}</p></div></div>`);
                             } else {
-                                $('#cardMatrix').append(`<div class='wordCard'><div class='textBox'><p class='cardText'>${card.word}</p></div></div>`);
+                                $('#cardMatrix').append(`<div id='${i}_${j}' onclick="userTippElkuldese(this)" name='wordCard' class='wordCard'><div class='textBox'><p class='cardText'>${card.word}</p></div></div>`);
                             }
                         }
                     } else if (card.team == 'red')
                     {
                         if (getCurrentPlayer().master) {
                             if (card.guessed) {
-                                $('#cardMatrix').append(`<div class='wordCard piros piros-kitalalt'><div class='textBox'><p class='cardText'>${card.word}</p></div></div>`);
+                                $('#cardMatrix').append(`<div id='${i}_${j}' class='wordCard piros piros-kitalalt'><div class='textBox'><p class='cardText'>${card.word}</p></div></div>`);
                             } else {
-                                $('#cardMatrix').append(`<div class='wordCard piros'><div class='textBox'><p class='cardText'>${card.word}</p></div></div>`);
+                                $('#cardMatrix').append(`<div id='${i}_${j}' onclick="userTippElkuldese(this)" name='wordCard' class='wordCard piros'><div class='textBox'><p class='cardText'>${card.word}</p></div></div>`);
                             }
                         } else {
                             if (card.guessed) {
-                                $('#cardMatrix').append(`<div class='wordCard piros piros-kitalalt'><div class='textBox'><p class='cardText'>${card.word}</p></div></div>`);
+                                $('#cardMatrix').append(`<div id='${i}_${j}' class='wordCard piros piros-kitalalt'><div class='textBox'><p class='cardText'>${card.word}</p></div></div>`);
                             } else {
-                                $('#cardMatrix').append(`<div class='wordCard'><div class='textBox'><p class='cardText'>${card.word}</p></div></div>`);
+                                $('#cardMatrix').append(`<div id='${i}_${j}' onclick="userTippElkuldese(this)" name='wordCard' class='wordCard'><div class='textBox'><p class='cardText'>${card.word}</p></div></div>`);
                             }
                         }
                     } else if (card.team == 'killer') {
                         if (getCurrentPlayer().master) {
-                            $('#cardMatrix').append(`<div class='wordCard gyilkos'><div class='textBox'><p class='cardText'>${card.word}</p></div></div>`);
+                            $('#cardMatrix').append(`<div id='${i}_${j}' class='wordCard gyilkos'><div class='textBox'><p class='cardText'>${card.word}</p></div></div>`);
                         } else
                         {
-                            $('#cardMatrix').append(`<div class='wordCard'><div class='textBox'><p class='cardText'>${card.word}</p></div></div>`);
+                            $('#cardMatrix').append(`<div id='${i}_${j}' onclick="userTippElkuldese(this)" name='wordCard' class='wordCard'><div class='textBox'><p class='cardText'>${card.word}</p></div></div>`);
                         }
                     } else {
-                        $('#cardMatrix').append(`<div class='wordCard'><div class='textBox'><p class='cardText'>${card.word}</p></div></div>`);
+                        if (card.guessed) {
+                            $('#cardMatrix').append(`<div id='${i}_${j}' class='wordCard civil-kitalalt'><div class='textBox'><p class='cardText'>${card.word}</p></div></div>`);
+                        } else {
+                            $('#cardMatrix').append(`<div id='${i}_${j}' onclick="userTippElkuldese(this)" name='wordCard' class='wordCard'><div class='textBox'><p class='cardText'>${card.word}</p></div></div>`);
+                        }
                     }
                 }
             }

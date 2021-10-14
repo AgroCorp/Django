@@ -54,6 +54,12 @@
     font-size: 30px;
 }
 
+.civil-kitalalt {
+    background-size: cover;
+    background-blend-mode: multiply;
+    background: url("WORDCARD1.png")repeat-x scroll center top rgba(255,255,255,0.5);
+}
+
 .piros{
     border: solid red 5px;
 }

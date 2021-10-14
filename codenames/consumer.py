@@ -84,6 +84,11 @@ class CodenamesConsumer(AsyncWebsocketConsumer):
         elif data['event'] == 'change_team':
             await self.change_team(data)
 
+        elif data['event'] == 'user_tipp':
+            pos = data['pos'].split('_')
+            user = data['user']
+            print(pos, user)
+
     # send join to socket
     async def join(self, event):
         await self.send(text_data=json.dumps({
