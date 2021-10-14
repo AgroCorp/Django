@@ -19,3 +19,101 @@
     height: auto;
     object-fit: cover;
 }
+
+
+.wordCard {
+    width: 5cm;
+    height: 3.3cm;
+    position: relative;
+    /* text-align: center; */
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    display: inline-flex;
+    background: url("WORDCARD1.png")repeat-x scroll center top transparent;
+    background-size: cover;
+}
+.textBox {
+    padding-left: 10px;
+    padding-right: 10px;
+    height: 35px;
+    width: 140px;
+    position: absolute;
+    display: flex;
+    bottom: 18px;
+    /* text-align: center; */
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    border-radius: 5px;
+    padding-top: 15px;
+}
+.cardText{
+    font-family: 'Tw Cen MT Condensed Extra Bold';
+    font-size: 30px;
+}
+
+.piros{
+    border: solid red 5px;
+}
+.prios-kitalalt{
+    background: url("WORDCARD1.png")repeat-x scroll center top rgba(255,0,0,0.5);
+    background-size: cover;
+    background-blend-mode: multiply;
+}
+
+.kek{
+    border: solid dodgerblue 5px;
+}
+.kek-kitalalt{
+    background: url("WORDCARD1.png")repeat-x scroll center top rgba(30,144,255,0.5);
+    background-size: cover;
+    background-blend-mode: multiply;
+}
+
+.main {
+    height: 255px;
+    width: 255px;
+    background-color: black;
+    border-radius: 15px;
+    border: solid 4px #484030;
+    position: relative;
+}
+
+.mapBox {
+        position: relative;
+    display: inline-flex;
+    top: 4px;
+    left: 5px;
+    margin-left: 3px;
+    margin-top: 3px;
+    height: 40px;
+    width: 40px;
+    border-radius: 3px;
+}
+
+.civil{
+    background-color: #d8cc98;
+}
+.red{
+    background-image: radial-gradient(circle, rgba(234, 100, 77, 1) 10%, rgba(219, 54, 26, 1) 29%, rgba(243, 173, 160, 1) 32%, rgba(242, 114, 111, 1) 36%, rgba(234, 30, 46, 1) 100%);
+}
+
+.blue {
+    background-image: radial-gradient(circle, rgba(95, 172, 250, 1) 10%, rgba(32, 75, 155, 1) 29%, rgba(48, 232, 241, 1) 32%, rgba(40, 169, 247, 1) 36%, rgba(0, 110, 150, 1) 100%);        }
+
+.killer {
+    font-size: 30px;
+    font-family: sans-serif;
+    color: black;
+    text-align: center;
+    background-color: #303030;
+}
+
+.killer::after {
+    position: absolute;
+    content: "\2716";
+    width: 100%;
+    text-align: center;
+    text-shadow: 0 0 5px white;
+}

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>map</title>
+
+    <Style>
+        .main {
+            height: 250px;
+            width: 250px;
+            background-color: black;
+            border-radius: 15px;
+            border: solid 4px #484030;
+            position: absolute;
+        }
+        .civil{
+            position: relative;
+            display: inline-flex;
+            top: 2px;
+            left: 2px;
+            margin-left: 5px;
+            margin-top: 5px;
+            height: 40px;
+            width: 40px;
+            border-radius: 3px;
+            background-color: #d8cc98;
+        }
+        .red{
+            position: relative;
+            display: inline-flex;
+            top: 2px;
+            left: 2px;
+            margin-left: 5px;
+            margin-top: 5px;
+            height: 40px;
+            width: 40px;
+            border-radius: 3px;
+            background-image: radial-gradient(circle, rgba(234, 100, 77, 1) 10%, rgba(219, 54, 26, 1) 29%, rgba(243, 173, 160, 1) 32%, rgba(242, 114, 111, 1) 36%, rgba(234, 30, 46, 1) 100%);
+        }
+
+        .blue {
+            position: relative;
+            display: inline-flex;
+            top: 2px;
+            left: 2px;
+            margin-left: 5px;
+            margin-top: 5px;
+            height: 40px;
+            width: 40px;
+            border-radius: 3px;
+            background-image: radial-gradient(circle, rgba(95, 172, 250, 1) 10%, rgba(32, 75, 155, 1) 29%, rgba(48, 232, 241, 1) 32%, rgba(40, 169, 247, 1) 36%, rgba(0, 110, 150, 1) 100%);        }
+
+        .killer {
+            position: relative;
+            display: inline-flex;
+            top: 2px;
+            left: 2px;
+            margin-left: 5px;
+            margin-top: 5px;
+            height: 40px;
+            width: 40px;
+            border-radius: 3px;
+            font-size: 30px;
+            color: black;
+            text-align: center;
+            background-color: #303030;
+        }
+
+        .killer::after {
+            position: absolute;
+            content: "\2716";
+            width: 100%;
+            text-align: center;
+            text-shadow: 0 0 5px white;
+        }
+    </Style>
+</head>
+<body>
+    <div class="main">
+        <div class="killer"></div>
+        <div class="civil"></div>
+        <div class="civil"></div>
+        <div class="red"></div>
+        <div class="civil"></div><br/>
+        <div class="civil"></div>
+        <div class="civil"></div>
+        <div class="blue"></div>
+        <div class="civil"></div>
+        <div class="civil"></div><br/>
+        <div class="civil"></div>
+        <div class="civil"></div>
+        <div class="civil"></div>
+        <div class="civil"></div>
+        <div class="civil"></div><br/>
+        <div class="civil"></div>
+        <div class="killer"></div>
+        <div class="civil"></div>
+        <div class="civil"></div>
+        <div class="civil"></div><br/>
+        <div class="civil"></div>
+        <div class="civil"></div>
+        <div class="civil"></div>
+        <div class="civil"></div>
+        <div class="civil"></div>
+    </div>
+</body>
+</html>

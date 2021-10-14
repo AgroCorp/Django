@@ -1,4 +1,5 @@
 {% extends 'loginApp/header.html' %}
+{% load customtemplates %}
 
 {% block title %}{{ room_id }} számú szoba{% endblock %}
 
@@ -9,7 +10,7 @@
     </div>
 
     <div class="flex-container mt-4" style="width: 100%;" id="playersList">
-    <div class="row">
+    <div class="row justify-content-center">
         <div id="pirosCsapat" class="col">
             <span>Piros csapat:</span><button class="btn" id="red_team" name="joinButton"><i class="fas fa-plus"></i></button>
             <ul id='pirosCsapatUl' class="list-group lists">
@@ -30,10 +31,30 @@
             </ul>
         </div>
     </div>
+    <div class="row justify-content-center"></div>
     </div>
 
-    <div id="game" class="flex-container mt-3" style="min-height: 500px;">
-
+    <div id="game" class="container mt-3" style="min-height: 500px;">
+    <div class="row justify-content-center" style="display: none">
+        <div class="main">
+            {% for i in "x"|rjust:"5" %}
+                {% for j in "x"|rjust:"5" %}
+                    <div class="mapBox civil"></div>
+                {% endfor %}
+                <br />
+            {% endfor %}
+        </div>
+    </div>
+        <div class="row justify-content-center mt-3 mb-2">
+            <div id="cardMatrix" class="flex-container">
+                {% for i in "x"|rjust:"5" %}
+                    {% for j in "x"|rjust:"5" %}
+                        {% word_card 'ASD' 'kek kek-kitalalt' %}
+                    {% endfor %}
+                    <br />
+                {% endfor %}
+            </div>
+        </div>
     </div>
 
     <div class="row ml-1 justify" style="height: 5%; display: none">
@@ -69,8 +90,12 @@
                 count = data.players.length;
                 $("#playersCount").text(count);
                 players = data.players;
-                console.log(players)
+                //console.log(players)
                 renderPlayerList(players)
+
+                if (players.length >= 4) {
+
+                }
             }
             else if (data.event = 'error') {
                 if (data.to_user == '{{ user.username }}')
@@ -83,16 +108,6 @@
         socket.onclose = function(e) {
             console.error('Chat socket closed unexpectedly');
             window.location.href = "{% url 'codenames:exit_room' %}";
-        };
-
-
-        document.querySelector('#sendBtn').onclick = function(e) {
-
-            socket.send(JSON.stringify({
-                'sender': "{{ user.username }}",
-                'message': message
-            }));
-
         };
 
         $("button[name='joinButton']").click( function () {
