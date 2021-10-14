@@ -1,6 +1,13 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 
+from codenames.Game import Game
+
+
+class MyEncoder(json.JSONEncoder):
+    def default(self, o):
+        return o.__dict__
+
 
 class CodenamesConsumer(AsyncWebsocketConsumer):
     players = {}
@@ -16,9 +23,6 @@ class CodenamesConsumer(AsyncWebsocketConsumer):
             self.channel_name = channel_name
             self.team = team
             self.master = master
-
-        def toJSON(self):
-            return self.__dict__
 
     async def connect(self):
         self.room_id = self.scope['url_route']['kwargs']['room_id']
@@ -38,7 +42,6 @@ class CodenamesConsumer(AsyncWebsocketConsumer):
             self.room_group_name,
             self.channel_name
         )
-        print('')
         self.players[self.room_group_name] = [x for x in self.players[self.room_group_name] if x.channel_name != self.channel_name]
 
         await self.channel_layer.group_send(
@@ -54,11 +57,14 @@ class CodenamesConsumer(AsyncWebsocketConsumer):
         data = json.loads(text_data)
 
         if data['event'] == 'start_game':
-            # Send message to room group
+            game = Game()
+            game.start_game()
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
-                    'type': 'join',
+                    'type': 'game',
+                    'matrix': json.dumps(game.words_map, cls=MyEncoder),
+                    'starting_team': game.starting_team
                 }
             )
         elif data['event'] == 'socket_connected':
@@ -72,7 +78,7 @@ class CodenamesConsumer(AsyncWebsocketConsumer):
                 self.room_group_name,
                 {
                     'type': 'join',
-                    'players': [player.toJSON() for player in self.players[self.room_group_name]]
+                    'players': json.dumps(self.players[self.room_group_name], cls=MyEncoder)
                 }
             )
         elif data['event'] == 'change_team':
@@ -90,6 +96,13 @@ class CodenamesConsumer(AsyncWebsocketConsumer):
             'event': 'error',
             'msg': event['msg'],
             'to_user': event['to_user']
+        }))
+
+    async def game(self, event):
+        await self.send(text_data=json.dumps({
+            'event': 'game',
+            'matrix': event['matrix'],
+            'starting_team': event['starting_team']
         }))
 
     async def change_team(self, data):
@@ -121,6 +134,6 @@ class CodenamesConsumer(AsyncWebsocketConsumer):
             self.room_group_name,
             {
                 'type': 'join',
-                'players': [player.toJSON() for player in self.players[self.room_group_name]]
+                'players': json.dumps(self.players[self.room_group_name], cls=MyEncoder)
             }
         )

@@ -22,6 +22,7 @@
 
 
 .wordCard {
+    margin-left: 5px;
     width: 5cm;
     height: 3.3cm;
     position: relative;
@@ -56,10 +57,14 @@
 .piros{
     border: solid red 5px;
 }
-.prios-kitalalt{
+.piros-kitalalt{
     background: url("WORDCARD1.png")repeat-x scroll center top rgba(255,0,0,0.5);
     background-size: cover;
     background-blend-mode: multiply;
+}
+
+.gyilkos {
+    border: solid black 5px;
 }
 
 .kek{
