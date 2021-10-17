@@ -38,7 +38,7 @@
     padding-left: 10px;
     padding-right: 10px;
     height: 35px;
-    width: 140px;
+    width: 150px;
     position: absolute;
     display: flex;
     bottom: 18px;
@@ -51,7 +51,10 @@
 }
 .cardText{
     font-family: 'Tw Cen MT Condensed Extra Bold';
-    font-size: 30px;
+    width: 150px;
+    font-size: 1.3vw;
+    white-space: nowrap;
+    text-align: center;
 }
 
 .civil-kitalalt {
@@ -60,9 +63,23 @@
     background: url("WORDCARD1.png")repeat-x scroll center top rgba(255,255,255,0.5);
 }
 
-.piros{
+.piros > .textBox {
+    bottom: 13px;
+}
+
+.kek > .textBox {
+    bottom: 13px;
+}
+
+.gyilkos > .textBox {
+    bottom: 13px;
+}
+
+.piros {
     border: solid red 5px;
 }
+
+
 .piros-kitalalt{
     background: url("WORDCARD1.png")repeat-x scroll center top rgba(255,0,0,0.5);
     background-size: cover;

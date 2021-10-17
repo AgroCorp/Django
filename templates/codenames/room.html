@@ -100,7 +100,9 @@
                     aktTeam = data.starting_team;
                     console.log("akt team: " + aktTeam);
                 }
-                renderCardMatrix(data.matrix)
+                $("button[name='joinButton']").hide();
+                renderCardMatrix(data.matrix);
+
             }
         };
 
