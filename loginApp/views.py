@@ -88,27 +88,43 @@ def register_request(request):
     if request.method == "POST":
         form = forms.NewUserForm(request.POST, initial={"moderator": False})
         if form.is_valid():
-            user = form.save()
-            login(request, user)
+            user = form.save(commit=False)
+            user.is_active = False
+            user.save()
             messages.success(request, "Registration successful.")
             plaintext = get_template('loginApp/email.txt')
             htmly = get_template('loginApp/emailTemplate.html')
 
             subject, from_email, to_email = 'registration successfully', 'noreply@sativus.space', user.email
 
+            token = settings.FERNET.encrypt(str(user.pk).encode()).decode()
+
             text_content = plaintext.render({'user': user})
-            html_content = htmly.render({'user': user})
+            html_content = htmly.render({'user': user, 'link': f"http://192.168.2.10:8000/recipes/activation?token={token}"})
 
             msg = EmailMultiAlternatives(subject, text_content, from_email, [to_email])
             msg.attach_alternative(html_content, 'text/html')
             msg.send()
 
-            return redirect("loginApp:homepage")
+            return render(request, 'loginApp/activationComplete.html', {})
         else:
             messages.error(request, "Unsuccessful registration. Invalid information.")
             return render(request=request, template_name="loginApp/register.html", context={"register_form": form})
     form = forms.NewUserForm
     return render(request=request, template_name="loginApp/register.html", context={"register_form": form})
+
+
+def activation(request):
+    if request.method == "GET":
+        user_id = request.GET.get('token', None)
+        if user_id:
+            real_user_id = settings.FERNET.decrypt(user_id.encode()).decode()
+            user = CustomUser.objects.get(pk=real_user_id)
+            if user:
+                user.is_active = True
+                user.save()
+                messages.success(request, 'Sikeresen aktivaltad a fiokod')
+                return redirect(to='loginApp:homepage')
 
 
 @login_required(login_url="/recipes/login?next=/recipes/recipe_list")
@@ -206,13 +222,16 @@ def login_request(request):
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
             user = authenticate(username=username, password=password)
-            if user is not None:
-                login(request, user)
-                messages.info(request, f"Sikeresen bejelentkeztél {username}.")
-                if next_url:
-                    return redirect(next_url)
+            if user:
+                if user.is_active:
+                    login(request, user)
+                    messages.success(request, f"Sikeresen bejelentkeztél {username}.")
+                    if next_url:
+                        return redirect(next_url)
+                    else:
+                        return redirect("loginApp:recipes")
                 else:
-                    return redirect("loginApp:recipes")
+                    messages.error(request, "Meg nem aktivaltad a fiokod")
             else:
                 messages.error(request, "Hibás felhasználónév vagy jelszó")
         else:

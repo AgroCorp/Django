@@ -1,2 +1,3 @@
 Hello {{ user.username }}
 Congratulation, you are successfully registered on djangoTestSite with username: {{ user.username }} email address: {{ user.email }}
+Please click here to activate {{ link }}

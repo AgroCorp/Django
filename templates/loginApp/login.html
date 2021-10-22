@@ -9,14 +9,6 @@
 <!--Login-->
 <div class="container py-5">
   <h1>Login</h1>
-    {% if messages %}
-        <div>
-        {% for message in messages %}
-            {{ message }}
-        {% endfor %}
-
-        </div>
-    {% endif %}
   <form method="POST">
     {% csrf_token %}
     {{ login_form|crispy }}
