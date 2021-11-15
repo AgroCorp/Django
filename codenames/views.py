@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 import random
 
@@ -15,7 +15,8 @@ def homepage(request):
 @login_required(login_url='/recipes/login?next=/codenames/')
 def create_room(request):
     if request.method == 'GET':
-        room_id = random.randint(1000, 9999)
+        # room_id = random.randint(1000, 9999)
+        room_id = 1111
         while room_id in chatrooms.keys():
             room_id = random.randint(1000, 9999)
         chatrooms[room_id] = 1
@@ -36,4 +37,4 @@ def join_room(request):
 
 
 def exit_room(request):
-    return render(request, 'codenames/home.html', {})
+    return redirect('/codenames')

@@ -32,6 +32,7 @@
         </div>
     </div>
     <div id="startButton" class="row justify-content-center"><button name="startButton" class="btn btn-success" >Start Game</button></div>
+    <div id="restartButton" class="row justify-content-center" style="display: none"><button name="restartButton" class="btn btn-warning">Restart Game</button></div>
     </div>
 
     <div id="game" class="container mt-3" style="min-height: 500px;">
@@ -45,9 +46,19 @@
             {% endfor %}
         </div>
     </div>
+        <div id="spymasterWordContainer" class="row justify-content-center mt-3 mb-2" style="display: none">
+            <h1 id="spymasterWord"></h1>
+        </div>
+        <div id="status" class="row justify-content-center mt-3 mb-2" style="display: none">
+            <h3 id="aktualisStatus"></h3>
+        </div>
         <div class="row justify-content-center mt-3 mb-2">
             <div id="cardMatrix" class="flex-container" style="display: none">
             </div>
+        </div>
+        <div id="spymasterInputDiv" class="row justify-content-center mt-3 mb-2" style="display: none">
+            <input class="form-control" type="text" id="spymasterInput" pattern="^\w+?\s\d+$">
+            <button class="btn btn-primary" id="spymasterSubmit">Kuldes</button>
         </div>
     </div>
 
@@ -56,6 +67,9 @@
         const roomName = JSON.parse(document.getElementById('room-id').textContent);
         var players;
         var aktTeam = '';
+        var spymasterSayed = false;
+        var tippelesVan = false;
+        var current_player = '';
 
         const socket = new WebSocket(
             'ws://'
@@ -74,7 +88,7 @@
 
         socket.onmessage = function(e) {
             const data = JSON.parse(e.data);
-            console.log(data);
+            console.log("parsed data:" + data);
             if (data.event == 'join')
             {
                 data.players = JSON.parse(data.players);
@@ -98,18 +112,80 @@
             } else if (data.event == "game") {
                 if (aktTeam == ''){
                     aktTeam = data.starting_team;
+                    {#aktTeam = 'blue';#}
                     console.log("akt team: " + aktTeam);
                 }
+                // csapat join gombok elrejtese
                 $("button[name='joinButton']").hide();
+
+                // az aktualis csapat spymasternek input megjelenitese
+                if (getCurrentPlayer().master && getCurrentPlayer().team == aktTeam) {
+                    $("#spymasterInputDiv").show();
+                }
+
+                // aktualis status beallitasa es megjelenitese
+                $("#status").show();
+                let status = aktTeam == 'blue' ? 'kék csapat ' : 'piros csapat ';
+                status += tippelesVan ? 'tippel' : 'spymasterre vár';
+                $("#aktualisStatus").html(status);
+
                 renderCardMatrix(data.matrix);
 
+            } else if (data.event == "spymaster_submit") {
+                tippelesVan = true;
+                current_player = data.first_user_to_tipp;
+
+                // aktualis status beallitasa es megjelenitese
+                $("#status").show();
+                let status = aktTeam == 'blue' ? 'kék csapat ' : 'piros csapat ';
+                status += tippelesVan ? 'tippel' : 'spymasterre vár';
+                $("#aktualisStatus").html(status);
+
+                $("#spymasterWordContainer").show();
+                $("#spymasterWord").html("spymaster kodszava: " + data.data);
+            } else if (data.event == "end_turn") {
+                renderCardMatrix(data.matrix);
+                aktTeam = aktTeam == 'blue' ? 'red' : 'blue';
+                current_player = data.next_player.name;
+
+                // status beallitasa
+                let status = aktTeam == 'blue' ? 'kék csapat ' : 'piros csapat ';
+                status += tippelesVan ? 'tippel' : 'spymasterre vár ';
+                status += 'jelenlegi tipp mester: ' + current_player;
+                $("#aktualisStatus").html(status);
+
+                // megfelelo spymasternek megjelenitjuk a input mezot
+                if (getCurrentPlayer().master && getCurrentPlayer().team == aktTeam) {
+                    $("#spymasterInputDiv").show();
+                }
+
+                // nincs tippeles
+                tippelesVan = false;
+
+            } else if (data.event == "next_tipp") {
+                return
+            } else if (data.event == "game_over") {
+                $("#aktualisStatus").html("A nyertes csapat: " +  data.winner);
+                $("#restartButton").show();
             }
         };
 
         socket.onclose = function(e) {
-            console.error('Chat socket closed unexpectedly');
+            console.error('Socket closed unexpectedly');
             window.location.href = "{% url 'codenames:exit_room' %}";
         };
+
+        $("#restartButton").on('click', function () {
+            init();
+        })
+
+        $("#spymasterSubmit").click(function () {
+            socket.send(JSON.stringify({
+                'event': 'spymaster_submit',
+                'data': $("#spymasterInput").val()
+            }));
+            $("#spymasterInputDiv").hide();
+        })
 
         $("button[name='joinButton']").click( function () {
             let a = $(this);
@@ -129,11 +205,16 @@
             }));
         });
 
+        function init() {
+            $('#cardMatrix').empty();
+            $("#cardMatrix").hide();
+            $("#spymasterInputDiv").hide();
+            $("button[name='joinButton']").show();
+        }
+
         function userTippElkuldese(element) {
-            console.log(getCurrentPlayer());
-            console.log(element.id);
             let akt = element.id;
-            if(getCurrentPlayer().team == aktTeam)
+            if(getCurrentPlayer().team == aktTeam && !getCurrentPlayer().master && getCurrentPlayer().username == current_player)
             {
                 console.log('user_tipp elkuldve a servernek')
                 socket.send(JSON.stringify({

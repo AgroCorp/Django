@@ -6,6 +6,8 @@ class Game:
     words_map = []
     word_list = []
     starting_team = ['red', 'blue'][random.randint(0, 1)]
+    spymaster_count = 0
+    user_tipp_count = 0
 
     class Field:
         guessed = False
@@ -32,13 +34,24 @@ class Game:
             print()
         print()
 
+    def kitalal(self, pos):
+        self.words_map[int(pos[0])][int(pos[1])].guessed = True
+
+    def check_game_is_over(self):
+        for i in self.words_map:
+            for j in i:
+                if not j.guessed:
+                    return False
+        return True
+
     def start_game(self):
         print("jatek generalas start")
         print("mezok alaphelyzetbe allitasa...")
         self.player_list = []
         self.words_map = []
         self.word_list = []
-        self.starting_team = ['red', 'blue'][random.randint(0, 1)]
+        # self.starting_team = ['red', 'blue'][random.randint(0, 1)]
+        self.starting_team = 'blue'
         print("kezdo csapat", self.starting_team)
 
         # load words from dictionary
