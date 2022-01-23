@@ -18,7 +18,7 @@ def get_switch_status():
         if GPIO.input(ports[i]):
             states[i + 1] = 'on'
         else:
-            states[i + 1] = 'of'
+            states[i + 1] = 'off'
 
         # if i == 0:
         #     switch_port = 31
