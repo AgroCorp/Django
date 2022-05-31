@@ -25,7 +25,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = '%#0407y^axep1tp8#$^bgjrav)^%p2xxy_t(80n0o97entu+$p'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG_ = 'armv7l' not in platform.platform()
 DEBUG = True
 
 ALLOWED_HOSTS = ['192.168.2.55', '127.0.0.1', '192.168.2.10']
@@ -66,6 +65,10 @@ EMAIL_PORT = 25
 IMAP_HOST = '192.168.2.55'
 IMAP_USERNAME = 'pi'
 IMAP_PASSWORD = 'Gaborka11'
+
+# MQTT config
+BROKER = "192.168.2.55"
+BROKER_PORT = 1883
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -118,7 +121,7 @@ DATABASES = {
         'HOST': '192.168.2.55',
         'PORT': '3306',
         'OPTIONS': {
-            "init_command": "SET foreign_key_checks = 0;SET sql_mode=STRICT_ALL_TABLES",
+            "init_command": "SET foreign_key_checks = 0",
         },
     }
 
@@ -183,23 +186,3 @@ CHANNEL_LAYERS = {
         },
     },
 }
-
-if not DEBUG_:
-    LOGGING = {
-        'version': 1,
-        'disable_existing_loggers': False,
-        'handlers': {
-            'file': {
-                'level': 'DEBUG',
-                'class': 'logging.FileHandler',
-                'filename': os.path.join(BASE_DIR, "log/debug.log"),
-            },
-        },
-        'loggers': {
-            'django': {
-                'handlers': ['file'],
-                'level': 'DEBUG',
-                'propagate': True,
-            },
-        },
-    }

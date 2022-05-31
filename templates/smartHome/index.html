@@ -6,39 +6,25 @@
 
 <div class="footer" style="padding:20px"> </div>
 
-{% if DEBUG_ %}
-
 <div class="container">
     <div id="accordion">
     <div class="card">
         <div class="card-header" id="headingOne">
         <h5 class="mb-0">
             <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-            Okos kapcsolók
+            LED kapcsolok
             </button>
         </h5>
         </div>
 
-        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
         <div class="card-body">
-
-            {% for key, value in state.items %}
+            {% for led in leds %}
             <div class="col-12 col-lg-5 pb-3 m-auto">
-            <button id="{{ key }}" name="{% if value == 'on' %}off{% else %}on{% endif %}" class="btn btn-{% if value == 'on' %}success {% else %}danger{% endif %} btn-block" value="{{ key }}">{{ key }}. kapcsolo <i id='{{ key }}stateicon' class="fas fa-toggle-{{ value }}"></i></button>
+            <button id="{{ led }}" name="1" class="btn btn-success btn-block" value="{{ led }}">{{ led }}. kapcsolo Be <i id='{{ led }}stateicon' class="fas fa-toggle-on"></i></button>
+            <button id="{{ led }}" name="0" class="btn btn-danger btn-block" value="{{ led }}">{{ led }}. kapcsolo Ki <i id='{{ led }}stateicon' class="fas fa-toggle-off"></i></button>
             </div>
             {% endfor %}
-{% comment %}        <div class="col-12 col-lg-5 pb-3 m-auto">
-            <button id="1" name="{{ state[1] }}" class="btn btn-<?php echo $state[1] == 'on' ? 'success' : 'danger' ?> btn-block" value="1">1. kapcsolo <i id='1stateicon' class="fas fa-toggle-<?php echo $state[1]; ?>"></i></button>
-        </div>
-        <div class="col-12 col-lg-5 pb-3 m-auto">
-            <button id="2" name="<?php echo $state[2] == 'on' ? 'ki' : 'be'; ?>" class="btn btn-<?php echo $state[2] == 'on' ? 'success' : 'danger' ?> btn-block" value="2">2. kapcsolo <i id='2stateicon' class="fas fa-toggle-<?php echo $state[2]; ?>"></i></button>
-        </div>
-        <div class="col-12 col-lg-5 pb-3 m-auto">
-            <button id="3" name="<?php echo $state[3] == 'on' ? 'ki' : 'be'; ?>" class="btn btn-<?php echo $state[3] == 'on' ? 'success' : 'danger' ?> btn-block" value="3">3. kapcsolo <i id='3stateicon' class="fas fa-toggle-<?php echo $state[3]; ?>"></i></button>
-        </div>
-        <div class="col-12 col-lg-5 pb-3 m-auto">
-            <button id="4" name="<?php echo $state[4] == 'on' ? 'ki' : 'be'; ?>" class="btn btn-<?php echo $state[4] == 'on' ? 'success' : 'danger' ?> btn-block" value="4">4. kapcsolo <i id='4stateicon' class="fas fa-toggle-<?php echo $state[4]; ?>"></i></button>
-        </div>{% endcomment %}
         </div>
         </div>
     </div>
@@ -58,30 +44,10 @@
         }, function(response) {
             json = response;
             console.log(json);
-            var color = (json[id] == 'on' ? 'green' : 'red');
-            var iconId = "#" + id + "stateicon";
 
-            if (json[id] == 'on') {
-                $(iconId).removeClass('fa-toggle-off').addClass('fa-toggle-on');
-                $("#" + id).removeClass('btn-danger').addClass('btn-success');
-                $("#" + id).attr('name', 'off');
-                $("#" + id).html(id + ". kapcsolo ");
-                $("#" + id).append($("<i id='" + iconId + "' class='fas fa-toggle-on'></i>"));
-            }
-            else {
-                $(iconId).removeClass('fa-toggle-on').addClass('fa-toggle-off');
-                $("#"+id).removeClass('btn-success').addClass('btn-danger');
-                $("#" + id).attr('name', 'on');
-                $("#" + id).html(id + ". kapcsolo ");
-                $("#" + id).append($("<i id='" + iconId + "' class='fas fa-toggle-off'></i>"));
-            }
         });
     });
 </script>
-
-{% else %}
-<h1>Lokalis kornyezeten nem futtathato csak Raspberryn</h1>
-{% endif %}
 
 {% endblock %}
 
